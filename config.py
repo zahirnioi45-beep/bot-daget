@@ -4,10 +4,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BOT_TOKEN       = os.getenv("BOT_TOKEN")
-CHANNEL_ID      = int(os.getenv("CHANNEL_ID"))
+CHANNEL_ID = int(os.getenv("CHANNEL_ID") or 0)
 CHANNEL_USERNAME = os.getenv("CHANNEL_USERNAME")
 CHANNEL_LINK = os.getenv("CHANNEL_LINK", "https://t.me/kepoqnjieng")
-OWNER_ID        = int(os.getenv("OWNER_ID"))
+OWNER_ID   = int(os.getenv("OWNER_ID") or 0)
 OWNER_USERNAME  = os.getenv("OWNER_USERNAME")
 BOT_USERNAME    = os.getenv("BOT_USERNAME")
 
