@@ -1,4 +1,8 @@
 import logging
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import os
+
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -28,6 +32,22 @@ from handlers.misc import (
     cb_menu_channel, cb_menu_share,
 )
 
+# ================= WEB SERVER (BIAR LOLOS DEPLOY) =================
+def run_web_server():
+    port = int(os.environ.get("PORT", 8080))
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_response(200)
+            self.send_header("Content-type", "text/plain")
+            self.end_headers()
+            self.wfile.write(b"Bot is running")
+
+    server = HTTPServer(("0.0.0.0", port), Handler)
+    server.serve_forever()
+
+
+# ================= LOGGING =================
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO,
@@ -36,12 +56,16 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+# ================= INIT DB =================
 async def post_init(app):
     await init_db()
     logger.info("Database initialized.")
 
 
+# ================= MAIN BOT =================
 def main():
+    logger.info("Starting bot...")
+
     app = Application.builder().token(BOT_TOKEN).post_init(post_init).build()
 
     # ─── COMMAND ─────────────────────────────
@@ -82,9 +106,11 @@ def main():
         )
     )
 
-    logger.info("Bot started.")
+    logger.info("Bot started successfully.")
     app.run_polling(drop_pending_updates=True)
 
 
+# ================= ENTRY =================
 if __name__ == "__main__":
+    threading.Thread(target=run_web_server).start()
     main()
