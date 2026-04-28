@@ -1,19 +1,3 @@
-from flask import Flask
-from threading import Thread
-import os
-
-app_web = Flask(__name__)
-
-@app_web.route('/')
-def home():
-    return "Bot Alive"
-
-def run_web():
-    port = int(os.environ.get("PORT", 8080))
-    app_web.run(host='0.0.0.0', port=port)
-
-Thread(target=run_web).start()
-
 import logging
 from telegram.ext import (
     Application,
